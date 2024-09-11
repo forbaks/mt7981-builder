@@ -110,6 +110,7 @@ jobs:
         rm -rf *kernel*
         rm -rf *.manifest
         rm -rf sha256sums
+        ls *.bin
         mv *sysupgrade.bin ${{ env.FIRMWARE_VERSION }}-ImmortalWrt-${{ matrix.router }}-108M-sysupgrade.bin
         mv *factory.bin ${{ env.FIRMWARE_VERSION }}-ImmortalWrt-${{ matrix.router }}-108M-factory.bin
         echo "FIRMWARE=$PWD" >> $GITHUB_ENV
