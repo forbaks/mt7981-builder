@@ -51,6 +51,7 @@ jobs:
         sudo chown $USER:$GROUPS /workdir
         echo "FIRMWARE_VERSION=$(date +"%Y%m%d")" >> $GITHUB_ENV
         echo "START_DATE=$(date +'%Y-%m-%d- %H:%M:%S')" >> $GITHUB_ENV
+        cat $GITHUB_ENV
         
     - name: Clone source code
       working-directory: /workdir
@@ -60,6 +61,7 @@ jobs:
         ln -sf /workdir/openwrt $GITHUB_WORKSPACE/openwrt
         cd openwrt && export REPO_GIT_VERSION=$(git rev-parse --short HEAD) && cd -
         echo "REPO_GIT_VERSION=$REPO_GIT_VERSION" >> $GITHUB_ENV
+        cat $GITHUB_ENV
         
     - name: Load custom feeds
       run: |
@@ -96,8 +98,6 @@ jobs:
       id: compile
       run: |
         cd openwrt
-        export CONFIG_MD5=$(md5sum .config)
-        echo "CONFIG_MD5=$CONFIG_MD5" >> $GITHUB_ENV
         sed -i "s/hwtype == 'broadcom'/(&)||(hwtype == 'mtwifi')/g" package/feeds/luci/luci-mod-network/htdocs/luci-static/resources/view/network/wireless.js
         echo -e "$(nproc) thread compile"
         make -j$(nproc) || make -j1 || make -j1 V=s || (curl -k -d "title=OpenWrt-${{ matrix.router }} Firmware Compile Failed" -d "content=Firmware-Version：${{ env.FIRMWARE_VERSION }}%0AStart：${{ env.START_DATE }}%0AFinish：$(date +'%Y-%m-%d %H:%M:%S')" -d "token=${{ env.PUSHPLUS_TOKEN }}&channel=cp&webhook=server" "http://www.pushplus.plus/send")
@@ -134,8 +134,8 @@ jobs:
       if: env.UPLOAD_RELEASE == 'true' && !cancelled()
       run: |
          time=$(date +%Y.%m.%d)
-         release_tag="${{ matrix.router }}-hanwckf-ImmortalWrt-$time-${{ env.REPO_GIT_VERSION }}-${{ env.CONFIG_MD5 }}"
-         release_name="${{ matrix.router }}-hanwckf-ImmortalWrt-$time-${{ env.REPO_GIT_VERSION }}-${{ env.CONFIG_MD5 }}"
+         release_tag="${{ matrix.router }}-hanwckf-ImmortalWrt-$time-${{ env.REPO_GIT_VERSION }}"
+         release_name="${{ matrix.router }}-hanwckf-ImmortalWrt-$time-${{ env.REPO_GIT_VERSION }}"
          echo "Default gateway：http://immortalwrt.lan/
          Login username: root
          Login password：no password" >> release.txt
