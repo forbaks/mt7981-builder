@@ -1,4 +1,4 @@
-name: ImmortalWrt-All
+name: ImmortalWrt-360t7
 
 on:
   repository_dispatch:
@@ -23,7 +23,7 @@ jobs:
     strategy:
       max-parallel: 2
       matrix:
-        router: [360T7, EA0326GMP]
+        router: [360T7]
     runs-on: ubuntu-22.04
 
     steps:
